@@ -7,9 +7,10 @@
 
 package frc.robot;
 
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PWMVictorSPX;
-import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -26,27 +27,29 @@ import edu.wpi.first.wpilibj.drive.DifferentialDrive;
  * directory.
  */
 public class Robot extends TimedRobot {
-    /*SpeedController m_frontLeft = new PWMVictorSPX(0);
-    SpeedController m_rearLeft = new PWMVictorSPX(1);
-    SpeedControllerGroup m_left = new SpeedControllerGroup(m_frontLeft, m_rearLeft);
+    SpeedController frontLeftBlow = new PWMVictorSPX(0);
+    SpeedController rearLeftBlow = new PWMVictorSPX(1);
+    SpeedControllerGroup left = new SpeedControllerGroup(frontLeftBlow, rearLeftBlow);
     
- 
-    SpeedController m_frontRight = new PWMVictorSPX(2);
-    SpeedController m_rearRight = new PWMVictorSPX(3);
-    SpeedControllerGroup m_right = new SpeedControllerGroup(m_frontRight, m_rearRight);
- 
-    DifferentialDrive m_robotDrive = new DifferentialDrive(m_left, m_right);*/
+    SpeedController frontRightSuck = new PWMVictorSPX(2);
+    SpeedController rearRightSuck = new PWMVictorSPX(3);
+    SpeedControllerGroup right = new SpeedControllerGroup(frontRightSuck, rearRightSuck);
 
-    Spark frontLeft = new Spark(0);
-    Spark rearLeft = new Spark(1);
-    Spark frontRight = new Spark(2);
-    Spark rearRight = new Spark(3);
-    Spark leftSuck = new Spark(4);
-    Spark rightBlow = new Spark(5);
+    //SpeedController leftBlow = new PWMVictorSPX(5);
+    //SpeedController rightSuck = new PWMVictorSPX(6);
+ 
+    DifferentialDrive robotDrive = new DifferentialDrive(left, right);
+
+    /*CANSparkMax frontLeft = new CANSparkMax(0, MotorType.kBrushless);
+    CANSparkMax rearLeft = new CANSparkMax(1, MotorType.kBrushless);
+    CANSparkMax frontRight = new CANSparkMax(2, MotorType.kBrushless);
+    CANSparkMax rearRight = new CANSparkMax(3, MotorType.kBrushless);
+    CANSparkMax leftSuck = new CANSparkMax(4, MotorType.kBrushless);
+    CANSparkMax rightBlow = new CANSparkMax(5, MotorType.kBrushless);
    
     SpeedControllerGroup left = new SpeedControllerGroup(frontLeft, rearLeft); 
     SpeedControllerGroup right = new SpeedControllerGroup(frontRight, rearRight);
-    DifferentialDrive robotDrive = new DifferentialDrive(left, right);
+    DifferentialDrive robotDrive = new DifferentialDrive(left, right);*/
     
     private final Joystick ps4 = new Joystick(0);
     private final Timer timer = new Timer();
@@ -107,15 +110,15 @@ public class Robot extends TimedRobot {
     }
 
     if (ps4.getRawButton(5)) {
-      leftSuck.set(1);
-    } else {
-      leftSuck.stopMotor();
+      left.set(-1);
+    } else { 
+      ;left.stopMotor();
     }
 
     if (ps4.getRawButton(6)) {
-      rightBlow.set(-1);
-    } else { 
-      rightBlow.stopMotor();
+      right.set(1);
+    } else {
+      right.stopMotor();
     }
 
     double ps4_move = (ps4.getRawAxis(3) - ps4.getRawAxis(4)) * move_sensitivity;
