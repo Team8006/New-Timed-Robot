@@ -9,8 +9,13 @@ package frc.robot;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+
+import edu.wpi.first.cameraserver.CameraServer;
+//import com.revrobotics.Spark;
+//import com.revrobotics.SparkLowLevel.MotorType;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PWMVictorSPX;
+import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -27,7 +32,7 @@ import edu.wpi.first.wpilibj.drive.DifferentialDrive;
  * directory.
  */
 public class Robot extends TimedRobot {
-    SpeedController frontLeftBlow = new PWMVictorSPX(0);
+    /*SpeedController frontLeftBlow = new PWMVictorSPX(0);
     SpeedController rearLeftBlow = new PWMVictorSPX(1);
     SpeedControllerGroup left = new SpeedControllerGroup(frontLeftBlow, rearLeftBlow);
     
@@ -38,18 +43,18 @@ public class Robot extends TimedRobot {
     //SpeedController leftBlow = new PWMVictorSPX(5);
     //SpeedController rightSuck = new PWMVictorSPX(6);
  
-    DifferentialDrive robotDrive = new DifferentialDrive(left, right);
+    DifferentialDrive robotDrive = new DifferentialDrive(left, right);*/
 
-    /*CANSparkMax frontLeft = new CANSparkMax(0, MotorType.kBrushless);
-    CANSparkMax rearLeft = new CANSparkMax(1, MotorType.kBrushless);
-    CANSparkMax frontRight = new CANSparkMax(2, MotorType.kBrushless);
-    CANSparkMax rearRight = new CANSparkMax(3, MotorType.kBrushless);
-    CANSparkMax leftSuck = new CANSparkMax(4, MotorType.kBrushless);
-    CANSparkMax rightBlow = new CANSparkMax(5, MotorType.kBrushless);
+    Spark frontLeft = new Spark(8);
+    Spark rearLeft = new Spark(9);
+    Spark frontRight = new Spark(0);
+    Spark rearRight = new Spark(1);
+    Spark intake = new Spark(7);
+    Spark carry = new Spark(2);
    
     SpeedControllerGroup left = new SpeedControllerGroup(frontLeft, rearLeft); 
     SpeedControllerGroup right = new SpeedControllerGroup(frontRight, rearRight);
-    DifferentialDrive robotDrive = new DifferentialDrive(left, right);*/
+    DifferentialDrive robotDrive = new DifferentialDrive(left, right);
     
     private final Joystick ps4 = new Joystick(0);
     private final Timer timer = new Timer();
@@ -89,6 +94,8 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopInit() {
+    CameraServer server = CameraServer.getInstance();
+    server.startAutomaticCapture();
   }
 
   /**
@@ -97,33 +104,41 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
 
-    double move_sensitivity = 0.5;
-    double rotate_sensitivity = 0.70;
+    double move_sensitivity = 0.4;
+    double rotate_sensitivity = 0.5;
+    double ps4_move = ((ps4.getRawAxis(4) + 0.5) - (ps4.getRawAxis(3) + 0.5)) * move_sensitivity;
+    double ps4_rotate = ps4.getX(Hand.kLeft) * rotate_sensitivity;
 
-    if (ps4.getRawButton(1))
+    if (ps4.getRawButton(1)==true)
     {
       rotate_sensitivity = 1.0;
     }
-    if (ps4.getRawButton(1))
+    if (ps4.getRawButton(1)==false)
     {
-      rotate_sensitivity = 0.70;
-    }
+      rotate_sensitivity = 0.5;
+    } 
 
     if (ps4.getRawButton(5)) {
-      left.set(-1);
-    } else { 
-      ;left.stopMotor();
+      intake.set(-0.5);
+    } else if (ps4.getRawButton(5) == false) { 
+      intake.stopMotor();
     }
 
     if (ps4.getRawButton(6)) {
-      right.set(1);
-    } else {
-      right.stopMotor();
+      intake.set(0.5);
+    } else if (ps4.getRawButton(6) == false) { 
+      intake.stopMotor();
     }
 
-    double ps4_move = (ps4.getRawAxis(3) - ps4.getRawAxis(4)) * move_sensitivity;
-    double ps4_rotate = ps4.getX(Hand.kLeft) * rotate_sensitivity; 
+    if (ps4.getRawAxis(5) != 0) {
+      carry.set(ps4.getRawAxis(5) * -0.5);
+      //rightBlow.set(oshit);
+    } else {
+      carry.stopMotor();
+    }
+    //rightBlow.set(oshit);
     robotDrive.arcadeDrive(ps4_move, ps4_rotate);
+
   }
 
   /**
