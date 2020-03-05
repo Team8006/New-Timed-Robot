@@ -8,6 +8,7 @@
 package frc.robot;
 
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
@@ -52,7 +53,20 @@ public class Robot extends TimedRobot {
     
     private final Joystick ps4 = new Joystick(0);
     private final Timer timer = new Timer();
-   
+
+  // distance in inches the robot wants to stay from an object
+  private static final double kHoldDistance = 12.0;
+
+  // factor to convert sensor values to a distance in inches
+  private static final double kValueToInches = 0.125;
+
+  // proportional speed constant
+  private static final double kP = 0.05;
+
+  // ultrasonic
+  private static final int ultrasonic_port = 0;
+  private final AnalogInput m_ultrasonic = new AnalogInput(ultrasonic_port);
+
   /**
    * This function is run when the robot is first started up and should be
    * used for any initialization code.
@@ -132,6 +146,15 @@ public class Robot extends TimedRobot {
     }
     //rightBlow.set(oshit);
     robotDrive.arcadeDrive(ps4_move, ps4_rotate);
+
+    // sensor returns a value from 0-4095 that is scaled to inches
+    double currentDistance = m_ultrasonic.getValue() * kValueToInches;
+
+    // convert distance error to a motor speed
+    double currentSpeed = (kHoldDistance - currentDistance) * kP;
+
+    // drive robot
+    robotDrive.arcadeDrive(currentSpeed, 0);
 
   }
 
