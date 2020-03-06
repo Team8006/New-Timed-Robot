@@ -76,7 +76,7 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousPeriodic() {
     // Drive for 2 seconds
-    if (timer.get() < 5.0) {
+    if (timer.get() < 2.5) {
       robotDrive.arcadeDrive(0.5, 0.0); // drives forwards half speed
     } else {
       robotDrive.stopMotor(); // stop robot
@@ -105,11 +105,11 @@ public class Robot extends TimedRobot {
 
     if (ps4.getRawButton(1)==true)
     {
-      rotate_sensitivity = 1.0;
+      move_sensitivity = 0.8;
     }
     if (ps4.getRawButton(1)==false)
     {
-      rotate_sensitivity = 0.5;
+      move_sensitivity = 0.4;
     } 
 
     if (ps4.getRawButton(5)) {
