@@ -107,19 +107,19 @@ public class Robot extends TimedRobot {
     {
       move_sensitivity = 0.8;
     }
-    if (ps4.getRawButton(1)==false)
+    if (ps4.getRawButton(2)==false)
     {
       move_sensitivity = 0.4;
     } 
 
     if (ps4.getRawButton(5)) {
-      intake.set(-0.5);
+      intake.set(-0.3);
     } else if (ps4.getRawButton(5) == false) { 
       intake.stopMotor();
     }
 
     if (ps4.getRawButton(6)) {
-      intake.set(0.5);
+      intake.set(0.3);
     } else if (ps4.getRawButton(6) == false) { 
       intake.stopMotor();
     }
