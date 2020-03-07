@@ -24,52 +24,93 @@ import edu.wpi.first.wpilibj.drive.DifferentialDrive;
  * directory.
  */
 public class Robot extends TimedRobot {
-
+  
+  // Sparks variables
   private Spark frontLeft;
   private Spark rearLeft;
   private Spark frontRight;
   private Spark rearRight;
   private Spark intake;
   private Spark carry;
-
+  
+  // Drivetrain variables
   private SpeedControllerGroup left;
   private SpeedControllerGroup right;
   private DifferentialDrive robotDrive;
 
-  private static final int frontLeftPort = 8;
-  private static final int rearLeftPort = 9;
-  private static final int frontRightPort = 0;
-  private static final int rearRightPort = 1;
-  private static final int intakePort = 7;
-  private static final int carryPort = 2;
+  // Movement variables
+  private double forward;
+  private double rotate;
 
+  // PS4 variables
   private Joystick ps4;
-  private static final int ps4Port = 0;
+  private double leftTrigger;
+  private double rightTrigger;
+  private double leftStickX;
+  private double rightStickY;
+  private boolean leftBumper;
+  private boolean rightBumper;
+  private boolean crossButton;
+
+  // Camera server object
+  private CameraServer server;
+
+  /**
+   * --Constants--
+   */
+
+  // Motor OI
+  private static final int frontLeft_Port = 8;
+  private static final int rearLeft_Port = 9;
+  private static final int frontRight_Port = 0;
+  private static final int rearRight_Port = 1;
+  private static final int intake_Port = 7;
+  private static final int carry_Port = 2;
+
+  // PS4 OI
+  private static final int ps4_Port = 0;
+  private static final int leftTrigger_Axis = 3;
+  private static final int rightTrigger_Axis = 4;
+  private static final Hand rightStickY_Hand = Hand.kRight;
+  private static final Hand leftStickX_Hand = Hand.kLeft;
+  private static final int leftBumper_Port = 5;
+  private static final int rightBumper_Port = 6;
+  private static final int crossButton_Port = 2;
+
+  // Sensitivity
+  private static final double forward_Sensitivity = 0.4;
+  private static final double rotate_Sensitivity = 0.5;
+  private static final double intake_Sensitivity = 0.5;
+  private static final double carry_Sensitivity = 0.5;
 
   private final Timer timer = new Timer();
-   
+
   /**
-   * This function is run when the robot is first started up and should be
-   * used for any initialization code.
+   * This function is run when the robot is first started up and should be used
+   * for any initialization code.
    */
   @Override
   public void robotInit() {
 
     // Assigning Spark ID
-    frontLeft = new Spark(frontLeftPort);
-    rearLeft = new Spark(rearLeftPort);
-    frontRight = new Spark(frontRightPort);
-    rearRight = new Spark(rearRightPort);
-    intake = new Spark(intakePort);
-    carry = new Spark(carryPort);
+    frontLeft = new Spark(frontLeft_Port);
+    rearLeft = new Spark(rearLeft_Port);
+    frontRight = new Spark(frontRight_Port);
+    rearRight = new Spark(rearRight_Port);
+    intake = new Spark(intake_Port);
+    carry = new Spark(carry_Port);
 
-    // Drivetrain
-    left = new SpeedControllerGroup(frontLeft, rearLeft); 
+    // Instantiating Drivetrain
+    left = new SpeedControllerGroup(frontLeft, rearLeft);
     right = new SpeedControllerGroup(frontRight, rearRight);
     robotDrive = new DifferentialDrive(left, right);
-    
+
     // Assigning PS4 Controller ID
-    ps4 = new Joystick(ps4Port);
+    ps4 = new Joystick(ps4_Port);
+
+    // Initiates and Displays USB Camera
+    server = CameraServer.getInstance();
+    server.startAutomaticCapture();
   }
 
   /**
@@ -99,8 +140,15 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopInit() {
-    CameraServer server = CameraServer.getInstance();
-    server.startAutomaticCapture();
+
+    // Assigns Buttons and Trigger IDs
+    leftTrigger = ps4.getRawAxis(leftTrigger_Axis);
+    rightTrigger = ps4.getRawAxis(rightTrigger_Axis);
+    leftStickX = ps4.getX(leftStickX_Hand);
+    rightStickY = ps4.getY(rightStickY_Hand);
+    leftBumper = ps4.getRawButton(leftBumper_Port);
+    rightBumper = ps4.getRawButton(rightBumper_Port);
+    crossButton = ps4.getRawButton(crossButton_Port);
   }
 
   /**
@@ -109,32 +157,26 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
 
-    // Sensitivity
-    double move_sensitivity = 0.4;
-    double rotate_sensitivity = 0.5;
-
     // Movement
-    double ps4_move = ((ps4.getRawAxis(4) + 0.5) - (ps4.getRawAxis(3) + 0.5)) * move_sensitivity;
-    double ps4_rotate = ps4.getX(Hand.kLeft) * rotate_sensitivity;
-    robotDrive.arcadeDrive(ps4_move, ps4_rotate);
+    forward = (rightTrigger - leftTrigger) * forward_Sensitivity;
+    rotate = leftStickX * rotate_Sensitivity;
+    robotDrive.arcadeDrive(forward, rotate);
 
     // Button Mapping
-    if (ps4.getRawButton(2)) {
-      rotate_sensitivity = 0.8;
-    } else {
-      rotate_sensitivity = 0.4;
-    } 
-
-    if (ps4.getRawButton(5)) {
-      intake.set(-0.5);
+    if (crossButton) {
+      forward *= 2;
     }
 
-    if (ps4.getRawButton(6)) {
-      intake.set(0.5);
+    if (leftBumper) {
+      intake.set(-intake_Sensitivity);
+    }
+
+    if (rightBumper) {
+      intake.set(intake_Sensitivity);
     } 
 
-    if (ps4.getRawAxis(5) != 0) {
-      carry.set(ps4.getRawAxis(5) * -0.5);
+    if (rightStickY != 0) {
+      carry.set(rightStickY * -carry_Sensitivity);
     }
   }
 
