@@ -81,10 +81,10 @@ public class Robot extends TimedRobot {
   private static final int crossButton_ID = 2;
 
   // Sensitivity
-  private static final double forward_Sensitivity = 0.4;
+  private static final double forward_Sensitivity = 0.5;
   private static final double rotate_Sensitivity = 0.5;
   private static final double intake_Sensitivity = 0.5;
-  private static final double carry_Sensitivity = 0.5;
+  private static final double carry_Sensitivity = 0.8;
 
   private final Timer timer = new Timer();
 
@@ -160,11 +160,6 @@ public class Robot extends TimedRobot {
     rightBumper = ps4.getRawButton(rightBumper_ID);
     crossButton = ps4.getRawButton(crossButton_ID);
 
-    // Movement
-    forward = (rightTrigger - leftTrigger) * forward_Sensitivity;
-    rotate = leftStickX * rotate_Sensitivity;
-    robotDrive.arcadeDrive(forward, rotate);
-
     // Button Mapping
     if (crossButton) {
       forward *= 2;
@@ -185,6 +180,11 @@ public class Robot extends TimedRobot {
     if (rightStickY != 0) {
       carry.set(rightStickY * -carry_Sensitivity);
     }
+
+    // Movement
+    forward = (rightTrigger - leftTrigger) * forward_Sensitivity;
+    rotate = leftStickX * rotate_Sensitivity;
+    robotDrive.arcadeDrive(forward, rotate);
   }
 
   /**
