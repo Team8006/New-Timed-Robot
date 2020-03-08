@@ -69,7 +69,7 @@ public class Robot extends TimedRobot {
   private static final int rearRight_ID = 1;
   private static final int intake_ID = 7;
   private static final int carry_ID = 2;
-  //private static final 
+  private static final MotorType motor_Type = MotorType.kBrushless;
 
   // PS4 OI
   private static final int ps4_Port = 0;
@@ -97,12 +97,12 @@ public class Robot extends TimedRobot {
   public void robotInit() {
 
     // Assigning Spark ID
-    frontLeft = new CANSparkMax(frontLeft_ID, MotorType.kBrushless);
-    rearLeft = new CANSparkMax(rearLeft_ID, MotorType.kBrushless);
-    frontRight = new CANSparkMax(frontRight_ID, MotorType.kBrushless);
-    rearRight = new CANSparkMax(rearRight_ID, MotorType.kBrushless);
-    intake = new CANSparkMax(intake_ID, MotorType.kBrushless);
-    carry = new CANSparkMax(carry_ID, MotorType.kBrushless);
+    frontLeft = new CANSparkMax(frontLeft_ID, motor_Type);
+    rearLeft = new CANSparkMax(rearLeft_ID, motor_Type);
+    frontRight = new CANSparkMax(frontRight_ID, motor_Type);
+    rearRight = new CANSparkMax(rearRight_ID, motor_Type);
+    intake = new CANSparkMax(intake_ID, motor_Type);
+    carry = new CANSparkMax(carry_ID, motor_Type);
 
     // Instantiating Drivetrain
     left = new SpeedControllerGroup(frontLeft, rearLeft);
