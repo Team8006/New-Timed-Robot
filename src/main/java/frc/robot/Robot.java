@@ -52,7 +52,8 @@ public class Robot extends TimedRobot {
   private double rightStickY;
   private boolean leftBumper;
   private boolean rightBumper;
-  private boolean crossButton;
+  private boolean nitroButtonPressed;
+  private boolean nitroButtonReleased;
 
   // Camera server object
   private CameraServer server;
@@ -78,13 +79,13 @@ public class Robot extends TimedRobot {
   private static final Hand leftStickX_Hand = Hand.kLeft;
   private static final int leftBumper_ID = 5;
   private static final int rightBumper_ID = 6;
-  private static final int crossButton_ID = 2;
+  private static final int nitroButton_ID = 2;
 
   // Sensitivity
-  private static final double forward_Sensitivity = 0.5;
+  private static final double forward_Sensitivity = 0.4;
   private static final double rotate_Sensitivity = 0.5;
-  private static final double intake_Sensitivity = 0.5;
-  private static final double carry_Sensitivity = 0.8;
+  private static final double intake_Sensitivity = 0.3;
+  private static final double carry_Sensitivity = 1;
 
   private final Timer timer = new Timer();
 
@@ -158,11 +159,14 @@ public class Robot extends TimedRobot {
     rightStickY = ps4.getRawAxis(rightStickY_ID);
     leftBumper = ps4.getRawButton(leftBumper_ID);
     rightBumper = ps4.getRawButton(rightBumper_ID);
-    crossButton = ps4.getRawButton(crossButton_ID);
+    nitroButtonPressed = ps4.getRawButtonPressed(nitroButton_ID);
+    nitroButtonReleased = ps4.getRawButtonReleased(nitroButton_ID);
 
-    // Button Mapping
-    if (crossButton) {
+    //Button Mapping
+    if (nitroButtonPressed) {
       forward *= 2;
+    } else if (nitroButtonReleased) {
+      forward *= 0.5;
     }
 
     if (leftBumper) {
