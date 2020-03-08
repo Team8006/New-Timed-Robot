@@ -82,7 +82,7 @@ public class Robot extends TimedRobot {
   private static final int turboButton_ID = 2;
 
   // Sensitivity
-  private static final double forward_Sensitivity = 0.4;
+  private static final double forward_Sensitivity = 0.5;
   private static final double rotate_Sensitivity = 0.5;
   private static final double intake_Sensitivity = 0.3;
   private static final double carry_Sensitivity = 1;
