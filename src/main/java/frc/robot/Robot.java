@@ -52,6 +52,7 @@ public class Robot extends TimedRobot {
   private double rightStickY;
   private boolean leftBumper;
   private boolean rightBumper;
+  private Boolean fastTurnButton;
   private boolean turboButtonPressed;
   private boolean turboButtonReleased;
 
@@ -79,11 +80,12 @@ public class Robot extends TimedRobot {
   private static final Hand leftStickX_Hand = Hand.kLeft;
   private static final int leftBumper_ID = 5;
   private static final int rightBumper_ID = 6;
+  private static final int fastTurnButton_ID = 1;
   private static final int turboButton_ID = 2;
 
   // Sensitivity
-  private static final double forward_Sensitivity = 0.55;
-  private static final double rotate_Sensitivity = 0.5;
+  private double forward_Sensitivity = 0.55;
+  private double rotate_Sensitivity = 0.5;
   private static final double intake_Sensitivity = 0.3;
   private static final double carry_Sensitivity = 1;
 
@@ -159,15 +161,22 @@ public class Robot extends TimedRobot {
     rightStickY = ps4.getRawAxis(rightStickY_ID);
     leftBumper = ps4.getRawButton(leftBumper_ID);
     rightBumper = ps4.getRawButton(rightBumper_ID);
+    fastTurnButton = ps4.getRawButton(fastTurnButton_ID);
     turboButtonPressed = ps4.getRawButtonPressed(turboButton_ID);
     turboButtonReleased = ps4.getRawButtonReleased(turboButton_ID);
 
     //Button Mapping
     if (turboButtonPressed) {
-      forward *= 2;
+      forward_Sensitivity = 1.0;
     } else if (turboButtonReleased) {
-      forward *= 0.5;
+      forward_Sensitivity = 0.5;
     }
+
+    if (fastTurnButton) {
+      rotate_Sensitivity = 0.8;
+    } else {
+      rotate_Sensitivity = 0.5;
+    } 
 
     if (rightBumper) {
       intake.set(intake_Sensitivity);
