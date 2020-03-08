@@ -82,7 +82,7 @@ public class Robot extends TimedRobot {
   private static final int turboButton_ID = 2;
 
   // Sensitivity
-  private static final double forward_Sensitivity = 0.5;
+  private static final double forward_Sensitivity = 0.55;
   private static final double rotate_Sensitivity = 0.5;
   private static final double intake_Sensitivity = 0.3;
   private static final double carry_Sensitivity = 1;
@@ -169,14 +169,10 @@ public class Robot extends TimedRobot {
       forward *= 0.5;
     }
 
-    if (leftBumper) {
-      intake.set(-intake_Sensitivity);
-    } else {
-      intake.stopMotor(); // stop intake
-    }
-
     if (rightBumper) {
       intake.set(intake_Sensitivity);
+    } else if (leftBumper) {
+      intake.set(-intake_Sensitivity);
     } else {
       intake.stopMotor(); // stop intake
     }
