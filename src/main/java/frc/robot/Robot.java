@@ -84,8 +84,14 @@ public class Robot extends TimedRobot {
   private static final int turboButton_ID = 2;
 
   // Sensitivity
-  private double forward_Sensitivity = 0.55;
-  private double rotate_Sensitivity = 0.5;
+  private static final double cruiseSpeed = 0.35;
+  private static final double turbo = 0.5 - cruiseSpeed;
+  private double forward_Sensitivity = cruiseSpeed;
+
+  private static final double slowTurn = 0.5;
+  private static final double fastTurn = 0.8;
+  private double rotate_Sensitivity = slowTurn;
+
   private static final double intake_Sensitivity = 0.3;
   private static final double carry_Sensitivity = 1;
 
@@ -153,7 +159,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopPeriodic() {
-    
+
     // Assigns PS4 OI
     leftTrigger = ps4.getRawAxis(leftTrigger_Axis);
     rightTrigger = ps4.getRawAxis(rightTrigger_Axis);
@@ -165,17 +171,17 @@ public class Robot extends TimedRobot {
     turboButtonPressed = ps4.getRawButtonPressed(turboButton_ID);
     turboButtonReleased = ps4.getRawButtonReleased(turboButton_ID);
 
-    //Button Mapping
+    // Button Mapping
     if (turboButtonPressed) {
-      forward_Sensitivity = 1.0;
+      forward_Sensitivity = cruiseSpeed + turbo;
     } else if (turboButtonReleased) {
-      forward_Sensitivity = 0.5;
+      forward_Sensitivity = cruiseSpeed;
     }
 
     if (fastTurnButton) {
-      rotate_Sensitivity = 0.8;
+      rotate_Sensitivity = fastTurn;
     } else {
-      rotate_Sensitivity = 0.5;
+      rotate_Sensitivity = slowTurn;
     } 
 
     if (rightBumper) {
